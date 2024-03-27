@@ -3,9 +3,10 @@
 #include <vector>
 #include <chrono>
 #include "entities/transactions.hpp"
+#include "entities/account.hpp"
 using namespace std;
 
-TransactionData generateData(string transactionId, double amount, int accountId) {
+TransactionData setData(string transactionId, double amount, int accountId) {
     TransactionData transData;
     transData.transactionId = transactionId;
     transData.amount = amount;
@@ -13,28 +14,39 @@ TransactionData generateData(string transactionId, double amount, int accountId)
     return transData;
 }
 
+vector<unique_ptr<Account>> generateAccounts(){
+    unique_ptr<Account> currentAccount = AccountFactory::createAccount(AccountFactory::CURRENT_ACCOUNT);
+    AccountData newData = {1, 0,"12", "Caio", "1313123", {"Rua", "Estado"}};
+    currentAccount->setData(newData);
+    unique_ptr<Account> savingAccount = AccountFactory::createAccount(AccountFactory::SAVING_ACCOUNT);
+    savingAccount->setData(newData);
+    vector<unique_ptr<Account>> accounts;
+    accounts.push_back(move(currentAccount));
+    accounts.push_back(move(savingAccount));
+    return accounts;
+}
+
 int main(int argc, char *argv[]) {
     auto start = chrono::high_resolution_clock::now();
-    unique_ptr<int> conta1 = make_unique<int>(123);
-    unique_ptr<int> conta2 = make_unique<int>(223);
     
-    vector<unique_ptr<int>> contas;
-    contas.push_back(move(conta1));
-    contas.push_back(move(conta2));
+    /*Escopo para contas*/
+    vector<unique_ptr<Account>> contas = generateAccounts();
 
-    Withdraw saque(generateData("A231", 2000, *contas[0]));
-    Deposit deposito(generateData("B231", 1000, *contas[1]));
-    Transfer transferencia(generateData("C231", 3000, *contas[1]));
-
+    /*Escopo para formatar os dados transladados(funções de taxa, análise...)*/
+    Withdraw saque(setData("A231", 2000, contas[0]->getData().amount));
+    Deposit deposito(setData("B231", 1000, contas[1]->getData().amount));
+    Transfer transferencia(setData("C231", 3000, contas[1]->getData().amount));
+    
+    /*Escopo para orquestração das operações(redes, registro...)*/
     TransactionsManager invoker;
     invoker.addTransaction(make_unique<Withdraw>(saque));
     invoker.addTransaction(make_unique<Deposit>(deposito));
     invoker.addTransaction(make_unique<Transfer>(transferencia));
 
     invoker.executeTransactions();
-
+    
+    /*Option de cronometrar tempo de execução*/
     auto end = chrono::high_resolution_clock::now();
-
     if (argc >= 2 && string(argv[1]) == "time") {
         chrono::duration<double> duration = end - start;
         cout << "Execution time: " << duration.count() << " seconds" << endl;

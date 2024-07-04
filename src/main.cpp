@@ -16,12 +16,15 @@ TransactionData setData(string transactionId, double amount, int accountId) {
 
 vector<unique_ptr<Account>> generateAccounts(){
     unique_ptr<Account> currentAccount = AccountFactory::createAccount(AccountFactory::CURRENT_ACCOUNT);
-    AccountData newData = {id: 1, 1000, "12", "Caio", "1313123", {"Rua", "Estado"}};
-    AccountData newData1 = {id: 2, 3000, "13", "Daniel", "8589678", {"Uar", "Doesta"}};
+    
+    AccountData newData = {id: 1, 1000, "12", "Caio", "1313123", {"Brasil","Rio Grande do Norte", "São Gonçalo do Amarante", "Alvorada Cruz - 33"}};
+    AccountData newData1 = {id: 2, 3000, "13", "Daniel", "8589678", {"Brasil","Bahia", "Ibura", "Maurice da Cruz - 22"}};
+    
     currentAccount->setData(newData);
     unique_ptr<Account> savingAccount = AccountFactory::createAccount(AccountFactory::SAVING_ACCOUNT);
     savingAccount->setData(newData1);
     vector<unique_ptr<Account>> accounts;
+    
     accounts.push_back(move(currentAccount));
     accounts.push_back(move(savingAccount));
     return accounts;

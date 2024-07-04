@@ -20,27 +20,39 @@ class Account{
 public:
     virtual ~Account(){};
     virtual AccountData getData() = 0;
-    virtual void setData(AccountData newData) = 0;
+    virtual int setData(AccountData newData) = 0;
 };
 class CurrentAccount : public Account{
 private:
     AccountData currentData;
 public:
-    void setData(AccountData newData){
+    int setData(AccountData newData){
         currentData = newData;
-        ofstream arquivo("../data/conta.txt");
+        ofstream arquivo("../data/conta.db", ios::out | ios::binary);
         if(!arquivo.is_open()){
             cerr << "Erro ao abrir o arquivo." << endl;
+            return 0;
         }
-        arquivo << "TESTE" << endl;
+        
+        arquivo << "ID: " << newData.id << "\n"  
+        << "Proprietário: " << newData.ownerName << "\n"
+        << "CPF: " << newData.ownerCpf << "\n"
+        << "Endereço: \n" 
+            << " (País): " << newData.ownerEnd[0]
+            << "\n (Estado): " << newData.ownerEnd[1]
+            << "\n (Cidade): " << newData.ownerEnd[2]
+            << "\n (Rua e Número): " << newData.ownerEnd[3]
+        << "\nSaldo: " << newData.amount << "\n"
+        << endl;
         arquivo.close();
 
-        ifstream arquivo1("../data/conta.txt");
+        ifstream arquivo1("../data/conta.db");
         string linha;
         while(getline(arquivo1, linha)){
-            cout << "Linha " << linha << endl;
+            cout << "" << linha << endl;
         }
         arquivo.close();
+        return 1;
     }
     AccountData getData() override {
         return currentData;
@@ -50,8 +62,9 @@ class SavingAccount : public Account{
 private:
     AccountData SavingData;
 public:
-    void setData(AccountData newData){
+    int setData(AccountData newData){
         SavingData = newData;
+        return 1;
     }
     AccountData getData() override {
         return SavingData;
@@ -61,8 +74,9 @@ class InvestmentAccount : public Account{
 private:
     AccountData InvestmentData;
 public:
-    void setData(AccountData newData) override{
+    int setData(AccountData newData) override{
         InvestmentData = newData;
+        return 1;
     };
     AccountData getData() override{
         return InvestmentData;

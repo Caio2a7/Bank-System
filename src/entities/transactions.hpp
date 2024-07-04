@@ -29,7 +29,8 @@ public:
     Withdraw(TransactionData _withdrawData) : withdrawData(_withdrawData) {}
 
     void execute() override {
-         cout<< " Executado Saque(Transação: " << withdrawData.transactionId << ", Quantidade: " 
+
+         cout<< "Executado Saque(Transação: " << withdrawData.transactionId << ", Quantidade: " 
         << withdrawData.amount << ", Conta: " << withdrawData.accountId << ")" << endl;
     }
 
@@ -63,7 +64,7 @@ public:
     Transfer(TransactionData _transferData) : transferData(_transferData) {}
 
     void execute() override {
-        cout << "Executado Transfer (Transação: " << transferData.transactionId 
+        cout << "Executado Transferência (Transação: " << transferData.transactionId 
          << ", Quantidade: " << transferData.amount 
          << ", Conta: " << transferData.accountId << ")" << endl;
     }
